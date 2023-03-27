@@ -1,0 +1,95 @@
+version: '3.7'
+
+services:
+
+  ms-identities:
+    restart: always
+    image: 'postgres:latest'
+    ports:
+      - "5481:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=ms-identities-db
+
+  ms-orders:
+    restart: always
+    image: 'postgres:latest'
+    ports:
+      - "5482:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=ms-orders-db
+
+  ms-couriers:
+    restart: always
+    image: 'postgres:latest'
+    ports:
+      - "5483:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=ms-couriers-db
+
+  ms-batches:
+    restart: always
+    image: 'postgres:latest'
+    ports:
+      - "5489:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=ms-batches-db
+
+
+  bank-service:
+    restart: always
+    image: 'postgres:latest'
+    ports:
+      - "5490:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=bank-service-db
+
+
+  rabbitmq:
+    image: rabbitmq:3.11.10-management
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  grafana:
+    build: './config/grafana'
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      monitoring:
+        aliases:
+          - grafana
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus:/prometheus
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      monitoring:
+        aliases:
+          - prometheus
+
+networks:
+  monitoring:

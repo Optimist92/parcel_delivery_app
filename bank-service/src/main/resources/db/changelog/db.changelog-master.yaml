@@ -1,0 +1,31 @@
+databaseChangeLog:
+  -
+#  - changeSet:
+#      id: 1
+#      author: admin
+#
+#  - include:
+#      file: 001_ddl_create_tables.sql
+#      relativeToChangelogFile: true
+#
+#  - include:
+#      file: 001_dml_insert_users.sql
+#      relativeToChangelogFile: true
+#
+#
+#  - changeSet:
+#      id: 2
+#      author: admin
+#
+#  - include:
+#      file: 002_dml_insert_accounts.sql
+#      relativeToChangelogFile: true
+#
+#
+#  - changeSet:
+#      id: 3
+#      author: admin
+#
+#  - include:
+#      file: 003_dml_insert_cards.sql
+#      relativeToChangelogFile: true

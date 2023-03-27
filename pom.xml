@@ -11,9 +11,14 @@
 
 	<modules>
 		<module>api-gateway</module>
-		<module>delivery-service</module>
+		<module>ms-identities</module>
+		<module>ms-orders</module>
 		<module>bank-service</module>
-		<module>authenticate-service</module>
+		<module>ms-batches</module>
+		<module>eureka-server</module>
+		<module>ms-couriers</module>
+		<module>shared</module>
+		<module>simulation-service</module>
 	</modules>
 
 </project>

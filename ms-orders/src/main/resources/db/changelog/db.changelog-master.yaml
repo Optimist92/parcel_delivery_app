@@ -1,0 +1,9 @@
+databaseChangeLog:
+  -
+  - changeSet:
+      id: 1
+      author: admin
+
+  - include:
+      file: 001_dml_insert_customers.sql
+      relativeToChangelogFile: true

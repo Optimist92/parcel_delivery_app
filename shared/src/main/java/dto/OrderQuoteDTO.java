@@ -1,5 +1,6 @@
 package dto;
 
+import enums.EOrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 
