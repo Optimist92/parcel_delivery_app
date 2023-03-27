@@ -20,6 +20,8 @@ public interface IOrderService {
 
     Order closeOrderByCourier(String token, OrderStatusDTO orderStatusDTO);
 
+    Order assignOrderToCourier(OrderStatusDTO orderStatusDTO);
+
     Order update(Order order);
 
     Order delete(UUID id);

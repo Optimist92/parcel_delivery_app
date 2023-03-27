@@ -59,4 +59,22 @@ public class AdminController {
     public ResponseEntity<OrderDTO> changeOrderStatus(@RequestBody OrderStatusDTO dto) {
         return ResponseEntity.ok().body(orderMapper.entityToDto(orderService.updateOrderStatusByAdmin(dto)));
     }
+
+    @Operation(summary = "Assign order to courier", tags = "admin")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Order assigned to courier",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = OrderStatusDTO.class)))
+                    }),
+            @ApiResponse(responseCode = "404", description = "Order not found"),
+            @ApiResponse(responseCode = "400", description = "Courier not available")
+    })
+    @PostMapping("/orders/assign")
+    public ResponseEntity<OrderDTO> assignOrderToCourier(@RequestBody OrderStatusDTO dto) {
+        return ResponseEntity.ok().body(orderMapper.entityToDto(orderService.assignOrderToCourier(dto)));
+    }
 }

@@ -6,6 +6,8 @@ import com.test.msorders.exception.UserAccessException;
 import com.test.msorders.repository.IOrderRepository;
 import com.test.msorders.services.IOrderService;
 import com.test.msorders.services.mappers.IOrderMapper;
+import dto.CourierDTO;
+import payload.BankSimulationParams2;
 import util.JwtUtil;
 import dto.OrderStatusDTO;
 import enums.EOrderStatus;
@@ -30,9 +32,9 @@ import static java.lang.Thread.sleep;
 @RequiredArgsConstructor
 public class OrderService implements IOrderService {
 
-    private final static String IDENTITIES_URL = "http://localhost:8081/ms-identities/auth/";
+    private final static String IDENTITIES_URL = "http://localhost:8081/ms-identities/auth";
 
-    private final static String COURIERS_URL = "http://localhost:8081/ms-couriers/";
+    private final static String COURIERS_URL = "http://localhost:8081/ms-couriers";
     private final IOrderRepository orderRepository;
     private final RabbitTemplate rabbitTemplate;
 
@@ -40,7 +42,7 @@ public class OrderService implements IOrderService {
 
     private final JwtUtil jwtUtil;
 
-    //private final RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     @Override
     public Order findByPublicId(UUID id) {
@@ -113,10 +115,29 @@ public class OrderService implements IOrderService {
         throw new ChangeStatusException(String.format("Данный статус недоступен для заказа №%s", orderStatusDTO.getPublicId()));
     }
 
+    @Override
+    public Order assignOrderToCourier(OrderStatusDTO orderStatusDTO) {
+
+        CourierDTO courier = restTemplate.getForObject(COURIERS_URL + "v1/couriers/" + orderStatusDTO.getPublicId(), CourierDTO.class);
+        if(courier == null) {
+            throw new EntityNotFoundException("Courier not found: publicId = " + orderStatusDTO.getCourierId());
+        }
+        if(!courier.getIsAvailable()) {
+            throw new ChangeStatusException(String.format("Курьер №%d не доступен", courier.getUserPublicId()));
+        }
+        Order order = orderRepository.findOrderByPublicId(UUID.fromString(orderStatusDTO.getPublicId())).orElseThrow(() -> new EntityNotFoundException("Order not found: publicId = " + orderStatusDTO.getPublicId()));
+        order.setCourierPublicId(orderStatusDTO.getCourierId());
+        order.setStatus(EOrderStatus.STATUS_ASSIGNED);
+        orderRepository.save(order);
+
+        return orderRepository.save(order);
+    }
+
     public Order acceptOrderByCustomer(String token, OrderStatusDTO orderStatusDTO) {
         Order order = orderRepository.findOrderByPublicId(UUID.fromString(orderStatusDTO.getPublicId())).orElseThrow(() -> new EntityNotFoundException("Order not found: publicId = " + orderStatusDTO.getPublicId()));
-        if(orderStatusDTO.getStatus().equals(EOrderStatus.STATUS_ACCEPTED) && order.getStatus().name().equals(EOrderStatus.STATUS_QUOTED.name()) && validMatchOrderUsers(token, order)) {
+        if(orderStatusDTO.getStatus().equals(EOrderStatus.STATUS_CONFIRMED) && order.getStatus().name().equals(EOrderStatus.STATUS_QUOTED.name()) && validMatchOrderUsers(token, order)) {
             order.setStatus(orderStatusDTO.getStatus());
+            //TODO передать в очередь для заморозки денег
             return orderRepository.save(order);
         }
         throw new ChangeStatusException(String.format("Данный статус недоступен для заказа №%s", orderStatusDTO.getPublicId()));

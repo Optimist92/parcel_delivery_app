@@ -59,7 +59,7 @@ public class OrderController {
         return ResponseEntity.ok().body(orderMapper.entityToDto(orderService.closeOrderByCourier(token, dto)));
     }
 
-    @PostMapping("/customer/accept_order")
+    @PostMapping("/customer/confirm_order")
     public ResponseEntity<OrderDTO> orderAcceptingByCustomer(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, OrderStatusDTO dto) {
         return ResponseEntity.ok().body(orderMapper.entityToDto(orderService.acceptOrderByCustomer(token, dto)));
     }
