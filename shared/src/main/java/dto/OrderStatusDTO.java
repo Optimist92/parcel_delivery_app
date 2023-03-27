@@ -8,4 +8,5 @@ import lombok.Data;
 public class OrderStatusDTO {
     private String publicId;
     private EOrderStatus status;
+    private Long courierId;
 }
