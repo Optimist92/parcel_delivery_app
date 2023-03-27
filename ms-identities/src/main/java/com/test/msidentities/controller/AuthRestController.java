@@ -20,9 +20,6 @@ public class AuthRestController {
 
     private final UserMapper userMapper;
 
-
-
-
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
         AuthenticationResponse token = service.authenticate(request);

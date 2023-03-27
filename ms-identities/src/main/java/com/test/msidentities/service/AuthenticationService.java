@@ -7,15 +7,16 @@ import com.test.msidentities.exception.IncorrectPasswordException;
 import com.test.msidentities.model.User;
 import com.test.msidentities.repository.UserRepository;
 import com.test.msidentities.util.JwtUtil;
-import dto.OrderDTO;
-import dto.UserDTO;
+import dto.CourierDTO;
 import enums.EUserRole;
 import exception.EntityNotFoundException;
+import jakarta.persistence.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -24,8 +25,13 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
+
+    @PersistenceUnit
+    private EntityManagerFactory entityManagerFactory;
     private final UserRepository userRepository;
     private final JwtUtil jwtService;
+
+    private final RestTemplate restTemplate;
 
     public User register(RegistrationRequest request) {
         User customer = new User();
@@ -47,15 +53,36 @@ public class AuthenticationService {
         roleMap.put("PublicId", user.getPublicId().toString());
         return AuthenticationResponse.builder().token(jwtService.generateToken(roleMap, UserDetailsImpl.build(user))).build();
     }
-
+    @Transactional
     public String courierRegister(RegistrationRequest request) {
         User courier = new User();
         courier.setEmail(request.getEmail());
         courier.setPassword(passwordEncoder().encode(request.getPassword()));
         courier.setUsername(request.getUsername());
         courier.setRole(EUserRole.ROLE_COURIER);
-        userRepository.save(courier);
-        return String.format("Курьер '%s' зарегистрирован", courier.getUsername());
+        //courier = userRepository.saveAndFlush(courier);
+        courier = saveUser(courier);
+        //User savedCourier = userRepository.findById(courier.getId()).orElseThrow();
+        CourierDTO courierDTO = new CourierDTO();
+        courierDTO.setUserPublicId(courier.getPublicId());
+        courierDTO.setIsAvailable(false);
+        ResponseEntity<CourierDTO> response = restTemplate.postForEntity("http://localhost:8083/v1/couriers", courierDTO, CourierDTO.class);
+        if(response.getBody() == null) {
+            throw new RuntimeException("Проблемы на стороне сервера курьеров");
+        }
+        return String.format("Курьер №'%d' зарегистрирован", courier.getPublicId());
+    }
+
+    @Transactional
+    public User saveUser(User user) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+        entityManager.persist(user);
+        transaction.commit();
+        entityManager.refresh(user);
+        entityManager.find(User.class, user.getId());
+        return entityManager.find(User.class, user.getId());
     }
 
     public User getUserByPublicId(String publicId) {
