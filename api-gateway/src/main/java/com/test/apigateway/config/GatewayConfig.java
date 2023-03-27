@@ -18,7 +18,7 @@ public class GatewayConfig {
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes().route("ms-orders", r -> r.path("/").filters(f -> f.filter(filter)).uri("lb://ms-orders"))
-                .route("ms-identities", r -> r.path("/auth/**").filters(f -> f.filter(filter)).uri("lb://ms-identities"))
-                .route("batch", r -> r.path("/batch/**").filters(f -> f.filter(filter)).uri("lb://batch")).build();
+                .route("ms-couriers", r -> r.path("/").filters(f -> f.filter(filter)).uri("lb://ms-couriers"))
+                .route("ms-batches", r -> r.path("/").filters(f -> f.filter(filter)).uri("lb://ms-batches")).build();
     }
 }

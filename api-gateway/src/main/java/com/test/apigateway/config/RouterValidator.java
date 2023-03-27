@@ -15,11 +15,12 @@ public class RouterValidator {
     );
 
     public static final List<String> adminEndpoints= List.of(
-            "/delivery/orders/alert",
+            "/ms-orders/orders/alert",
             "/auth/courier/register",
-            "/delivery/admin/couriers",
-            "/delivery/admin/orders",
-            "/delivery/admin/orders/change_order_status"
+            "/ms-orders/v1/admin/couriers",
+            "/ms-orders/v1/admin/orders",
+            "/ms-orders/v1/admin/orders/change_order_status",
+            "/ms-orders/v1/admin/orders/assign"
     );
 
     public static final List<String> courierEndpoints= List.of(
