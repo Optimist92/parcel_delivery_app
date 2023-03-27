@@ -1,0 +1,567 @@
+{
+	"info": {
+		"_postman_id": "79c09daa-74d2-4fdf-9643-69a31253317c",
+		"name": "Parcel Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13030601"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"admin\",\r\n  \"password\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"user16\",\r\n  \"email\": \"louirhth16@mail.com\",\r\n  \"password\": \"user16\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Assign order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiUk9MRV9BRE1JTiIsIlB1YmxpY0lkIjoiMSIsInN1YiI6ImFkbWluIiwiaWF0IjoxNjc5OTEzMzM3LCJleHAiOjE2Nzk5MTY5Mzd9.CfR4zF6iZ6P12Z2iSlz7U4_qD5czs4yuWvZ1g6ph3-Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"publicId\": \"\",\r\n  \"status\": \"STATUS_DRAFT\",\r\n  \"courierId\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/ms-orders/v1/orders/customer/confirm_order",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ms-orders",
+								"v1",
+								"orders",
+								"customer",
+								"confirm_order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all couriers",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Create courier",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"courier1@mail.com\",\r\n  \"username\": \"courier1\",\r\n  \"password\": \"courier1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/auth/courier/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"auth",
+								"courier",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change order status(implemented closed only)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"publicId\": \"7ab2e7d5-5583-4a7d-ba2d-5bb6da1f542c\",\r\n  \"status\": \"STATUS_CLOSED\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/ms-orders/v1/admin/orders/change_order_status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ms-orders",
+								"v1",
+								"admin",
+								"orders",
+								"change_order_status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all parcels",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Customer",
+			"item": [
+				{
+					"name": "Create Order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiUk9MRV9DVVNUT01FUiIsIlB1YmxpY0lkIjoiNiIsInN1YiI6InVzZXIxNSIsImlhdCI6MTY3OTkxMzUwNCwiZXhwIjoxNjc5OTE3MTA0fQ.NDG7aTXE9STVltpTN8GQTIRccVCyLJzaiLJuQt5i0Zw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"content\": \"mobile samsung\",\r\n  \"locationFrom\": \"Москва\",\r\n  \"locationTo\": \"Нижний Новгород\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/ms-orders/v1/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ms-orders",
+								"v1",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/ms-orders/v1/orders/confirm_order",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ms-orders",
+								"v1",
+								"orders",
+								"confirm_order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get order",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Close order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiUk9MRV9DVVNUT01FUiIsIlB1YmxpY0lkIjoiNiIsInN1YiI6InVzZXIxIiwiaWF0IjoxNjc5OTMwNDIzLCJleHAiOjE2Nzk5MzQwMjN9.ucp_tXoHcASd8wvmE0WzaOl0w9bivOc38VvND-zNaPw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"publicId\": \"4b2c03d9-5d39-40b9-8e40-2d86f19775e7\",\r\n  \"status\": \"STATUS_CLOSED\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/ms-orders/v1/orders/customer/close_order",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ms-orders",
+								"v1",
+								"orders",
+								"customer",
+								"close_order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all customers parsels",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiUk9MRV9DVVNUT01FUiIsIlB1YmxpY0lkIjoiNiIsInN1YiI6InVzZXIxIiwiaWF0IjoxNjc5OTMzODY1LCJleHAiOjE2Nzk5Mzc0NjV9.kCLKEi1cd6J-mbLJgD6MA_VumjoWZVbAqEixewEWNy4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/ms-orders/v1/orders/customer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ms-orders",
+								"v1",
+								"orders",
+								"customer"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiUk9MRV9DVVNUT01FUiIsIlB1YmxpY0lkIjoiNiIsInN1YiI6InVzZXIxIiwiaWF0IjoxNjc5OTMyMzY0LCJleHAiOjE2Nzk5MzU5NjR9.z9w-Em9fN8xdWuhpLQ5tbalD2U2am_rmQMC1mKCAgpg",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Simulation",
+			"item": [
+				{
+					"name": "Simulation Update Params",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"customerSimulationParams\": {\r\n        \"customerGenerationMinDelay\": 100,\r\n        \"customerGenerationMaxDelay\": 1000,\r\n        \"customerStartActionMinDelay\": 0,\r\n        \"customerStartActionMaxDelay\": 500,\r\n        \"customerDeclineOrderMinProbability\": 0.00,\r\n        \"customerDeclineOrderMaxProbability\": 19.99\r\n    },\r\n    \"bankSimulationParams\": {\r\n        \"accountFundsReservationMinDelay\": 1000,\r\n        \"accountFundsReservationMaxDelay\": 3000,\r\n        \"accountFundsChargingMinDelay\": 1000,\r\n        \"accountFundsChargingMaxDelay\": 3000,\r\n        \"accountInsufficientFundsMinProbability\": 0.00,\r\n        \"accountInsufficientFundsMaxProbability\": 9.99,\r\n        \"accountBlockedMinProbability\": 10.00,\r\n        \"accountBlockedMaxProbability\": 14.99,\r\n        \"accountNotFoundMinProbability\": 15.00,\r\n        \"accountNotFoundMaxProbability\": 19.99\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8091/simulation/update-params",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8091",
+							"path": [
+								"simulation",
+								"update-params"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Simulation Start",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8091/simulation/start",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8091",
+							"path": [
+								"simulation",
+								"start"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Simulation stop",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8091/simulation/stop",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8091",
+							"path": [
+								"simulation",
+								"stop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Batch Start Job",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8089/batch/alert/start",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8089",
+							"path": [
+								"batch",
+								"alert",
+								"start"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Courier",
+			"item": [
+				{
+					"name": "Get all parcels by courier",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Close order by courier",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiUk9MRV9DVVNUT01FUiIsIlB1YmxpY0lkIjoiNiIsInN1YiI6InVzZXIxIiwiaWF0IjoxNjc5OTMwNDIzLCJleHAiOjE2Nzk5MzQwMjN9.ucp_tXoHcASd8wvmE0WzaOl0w9bivOc38VvND-zNaPw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"publicId\": \"4b2c03d9-5d39-40b9-8e40-2d86f19775e7\",\r\n  \"status\": \"STATUS_CLOSED\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/ms-orders/v1/orders/courier/close_order",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ms-orders",
+								"v1",
+								"orders",
+								"courier",
+								"close_order"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
