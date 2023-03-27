@@ -6,13 +6,13 @@ import com.test.msorders.exception.UserAccessException;
 import com.test.msorders.repository.IOrderRepository;
 import com.test.msorders.services.IOrderService;
 import com.test.msorders.services.mappers.IOrderMapper;
+import constants.RabbitConstants;
+import dto.OrderDTO;
 import dto.CourierDTO;
-import payload.BankSimulationParams2;
 import util.JwtUtil;
 import dto.OrderStatusDTO;
 import enums.EOrderStatus;
 import enums.EUserRole;
-import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.NotImplementedException;
@@ -34,7 +34,7 @@ public class OrderService implements IOrderService {
 
     private final static String IDENTITIES_URL = "http://localhost:8081/ms-identities/auth";
 
-    private final static String COURIERS_URL = "http://localhost:8081/ms-couriers";
+    private final static String COURIERS_URL = "http://localhost:8083/";
     private final IOrderRepository orderRepository;
     private final RabbitTemplate rabbitTemplate;
 
@@ -55,7 +55,7 @@ public class OrderService implements IOrderService {
     }
 
     public List<Order> findOrdersByCustomer(String token) {
-        return orderRepository.findAllByCustomerPublicId(Long.getLong(jwtUtil.getPublicIdFromToken(token)));
+        return orderRepository.findAllByCustomerPublicId(Long.parseLong(jwtUtil.getPublicIdFromToken(token)));
     }
 
     public List<Order> findOrdersByCourier(String token) {
@@ -69,19 +69,19 @@ public class OrderService implements IOrderService {
         if(!jwtUtil.getRoleFromToken(token).equals(EUserRole.ROLE_CUSTOMER.name())) {
             throw new UserAccessException("Пользователь с данной ролью не может сделать заказ");
         }
-        Long publicId = Long.getLong(jwtUtil.getPublicIdFromToken(token));
+        String publicId = jwtUtil.getPublicIdFromToken(token);
 
         order.setId(UUID.randomUUID());
         order.setPublicId(UUID.randomUUID());
         order.setTitle(new Date().toString());
         order.setStatus(EOrderStatus.STATUS_DRAFT);
         order.setCreationDate(new Date());
-        order.setCustomerPublicId(publicId);
+        order.setCustomerPublicId(Long.parseLong(publicId));
         //TODO create save method
         try {
             savedOrder = orderRepository.save(order);
             //TODO save history
-            rabbitTemplate.convertAndSend("draft-order", orderMapper.entityToDto(savedOrder));
+            rabbitTemplate.convertAndSend(RabbitConstants.DraftOrdersRoutingKey, orderMapper.entityToDto(savedOrder));
 
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityViolationException("Нарушение уникальности по полю" + ": " + e.getCause().getCause().getMessage());
@@ -115,10 +115,20 @@ public class OrderService implements IOrderService {
         throw new ChangeStatusException(String.format("Данный статус недоступен для заказа №%s", orderStatusDTO.getPublicId()));
     }
 
+    public Order closeOrderByCustomer(String token, OrderStatusDTO orderStatusDTO) {
+        List<EOrderStatus> possiblyCloseStatusList = List.of(EOrderStatus.STATUS_DRAFT, EOrderStatus.STATUS_QUOTED);
+        Order order = orderRepository.findOrderByPublicId(UUID.fromString(orderStatusDTO.getPublicId())).orElseThrow(() -> new EntityNotFoundException("Order not found: publicId = " + orderStatusDTO.getPublicId()));
+        if(orderStatusDTO.getStatus().equals(EOrderStatus.STATUS_CLOSED) && possiblyCloseStatusList.contains(order.getStatus()) && validMatchOrderUsers(token, order)) {
+            order.setStatus(EOrderStatus.STATUS_CLOSED);
+            return orderRepository.save(order);
+        }
+        throw new ChangeStatusException(String.format("Данный статус недоступен для заказа №%s", orderStatusDTO.getPublicId()));
+    }
+
     @Override
     public Order assignOrderToCourier(OrderStatusDTO orderStatusDTO) {
 
-        CourierDTO courier = restTemplate.getForObject(COURIERS_URL + "v1/couriers/" + orderStatusDTO.getPublicId(), CourierDTO.class);
+        CourierDTO courier = restTemplate.getForObject(COURIERS_URL + "v1/couriers/" + orderStatusDTO.getCourierId(), CourierDTO.class);
         if(courier == null) {
             throw new EntityNotFoundException("Courier not found: publicId = " + orderStatusDTO.getCourierId());
         }
@@ -154,14 +164,17 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public int quoteOrder(Order order) {
-        return orderRepository.quoteOrder(order.getId(), "order.getCost()");
+    public OrderDTO processQuotedOrder(OrderDTO orderDTO) {
+        orderRepository.updateQuotedOrder(orderDTO.getPublicId(), orderDTO.getCost());
+        return orderDTO;
     }
 
 
     public boolean validMatchOrderUsers(String token, Order order) {
         String publicId = jwtUtil.getPublicIdFromToken(token);
         String role = jwtUtil.getRoleFromToken(token);
+        UUID orderPublicId = order.getPublicId();
+        order = orderRepository.findOrderByPublicId(orderPublicId).orElseThrow(() -> new EntityNotFoundException("Order not found: publicId = " + orderPublicId.toString()));
         if(role.equals(EUserRole.ROLE_CUSTOMER.name()) && !publicId.equals(order.getCustomerPublicId().toString())) {
             throw new UserAccessException(String.format("Заказ номер:%s отсутствует или создан другим пользователем", order.getPublicId().toString()));
         }

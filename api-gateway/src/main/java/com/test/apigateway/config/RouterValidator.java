@@ -10,8 +10,8 @@ import java.util.function.Predicate;
 public class RouterValidator {
 
     public static final List<String> openApiEndpoints= List.of(
-            "/auth/register",
-            "/auth/login"
+            "/ms-identities/auth/register",
+            "/ms-identities/auth/login"
     );
 
     public static final List<String> adminEndpoints= List.of(

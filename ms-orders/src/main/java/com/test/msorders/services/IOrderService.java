@@ -1,6 +1,7 @@
 package com.test.msorders.services;
 
 import com.test.msorders.domain.Order;
+import dto.OrderDTO;
 import dto.OrderStatusDTO;
 
 import java.util.List;
@@ -22,9 +23,11 @@ public interface IOrderService {
 
     Order assignOrderToCourier(OrderStatusDTO orderStatusDTO);
 
+    Order closeOrderByCustomer(String token, OrderStatusDTO orderStatusDTO);
+
     Order update(Order order);
 
     Order delete(UUID id);
 
-    int quoteOrder(Order order);
+    OrderDTO processQuotedOrder(OrderDTO orderDTO);
 }

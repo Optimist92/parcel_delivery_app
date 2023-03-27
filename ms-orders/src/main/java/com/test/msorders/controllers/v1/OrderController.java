@@ -54,14 +54,19 @@ public class OrderController {
         return ResponseEntity.ok().body(orders.stream().map(orderMapper::entityToDto).collect(Collectors.toList()));
     }
 
-    @GetMapping("/courier/change_order_status")
-    public ResponseEntity<OrderDTO> orderClosingByCourier(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, OrderStatusDTO dto) {
+    @PostMapping("/courier/close_order")
+    public ResponseEntity<OrderDTO> orderClosingByCourier(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody OrderStatusDTO dto) {
         return ResponseEntity.ok().body(orderMapper.entityToDto(orderService.closeOrderByCourier(token, dto)));
     }
 
     @PostMapping("/customer/confirm_order")
-    public ResponseEntity<OrderDTO> orderAcceptingByCustomer(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, OrderStatusDTO dto) {
+    public ResponseEntity<OrderDTO> orderAcceptingByCustomer(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody OrderStatusDTO dto) {
         return ResponseEntity.ok().body(orderMapper.entityToDto(orderService.acceptOrderByCustomer(token, dto)));
+    }
+
+    @PostMapping("/customer/close_order")
+    public ResponseEntity<OrderDTO> orderClosingByCustomer(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody OrderStatusDTO dto) {
+        return ResponseEntity.ok().body(orderMapper.entityToDto(orderService.closeOrderByCustomer(token, dto)));
     }
 
     /*@GetMapping("/test")
