@@ -1,0 +1,13 @@
+databaseChangeLog:
+  -
+  - changeSet:
+      id: 1
+      author: admin
+
+  - include:
+      file: 001_ddl_tables.sql
+      relativeToChangelogFile: true
+
+  - include:
+      file: 001_dml_insert_couriers.sql
+      relativeToChangelogFile: true
