@@ -59,7 +59,7 @@ public class OrderService implements IOrderService {
     }
 
     public List<Order> findOrdersByCourier(String token) {
-        return orderRepository.findAllByCourierPublicId(Long.getLong(jwtUtil.getPublicIdFromToken(token)));
+        return orderRepository.findAllByCourierPublicId(Long.parseLong(jwtUtil.getPublicIdFromToken(token)));
     }
 
     @Override
