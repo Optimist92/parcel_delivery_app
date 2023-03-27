@@ -60,9 +60,8 @@ public class AuthenticationService {
         courier.setPassword(passwordEncoder().encode(request.getPassword()));
         courier.setUsername(request.getUsername());
         courier.setRole(EUserRole.ROLE_COURIER);
-        //courier = userRepository.saveAndFlush(courier);
+        //TODO create custom sequence
         courier = saveUser(courier);
-        //User savedCourier = userRepository.findById(courier.getId()).orElseThrow();
         CourierDTO courierDTO = new CourierDTO();
         courierDTO.setUserPublicId(courier.getPublicId());
         courierDTO.setIsAvailable(false);
